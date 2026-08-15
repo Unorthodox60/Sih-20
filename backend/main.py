@@ -1,5 +1,7 @@
 import json
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI, Depends, HTTPException
+# pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -30,13 +32,17 @@ async def check_email(email: str):
 def register_org(org: schemas.OrganizationCreate, db: Session = Depends(get_db)):
     db_org = db.query(models.Organization).filter(models.Organization.name == org.name).first()
     if db_org:
-        raise HTTPException(status_code=400, detail="Organization already registered")
+        return db_org
     
     new_org = models.Organization(name=org.name)
     db.add(new_org)
     db.commit()
     db.refresh(new_org)
     return new_org
+
+@app.get("/organizations", response_model=list[schemas.Organization])
+def get_organizations(db: Session = Depends(get_db)):
+    return db.query(models.Organization).all()
 
 @app.post("/add-credential", response_model=schemas.MonitoredAccount)
 async def add_credential(account: schemas.AccountCreate, db: Session = Depends(get_db)):
