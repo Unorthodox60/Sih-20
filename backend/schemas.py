@@ -38,3 +38,22 @@ class PasswordCheckResponse(BaseModel):
 class EmailCheckResponse(BaseModel):
     breached: bool
     breach_list: List[str]
+
+class BreachDetail(BaseModel):
+    name: str
+    date: str
+    exposed_data: str
+
+class ScoreBreakdown(BaseModel):
+    description: str
+    score_added: int
+
+class RecommendedAction(BaseModel):
+    action: str
+
+class AccountDetailResponse(BaseModel):
+    email: str
+    risk_score: float
+    breaches: List[BreachDetail]
+    score_breakdowns: List[ScoreBreakdown]
+    recommendations: List[RecommendedAction]

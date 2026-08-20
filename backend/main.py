@@ -1,9 +1,12 @@
 import json
 # pyrefly: ignore [missing-import]
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 # pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+import os
 
 import models, schemas, services
 from database import engine, get_db
@@ -14,7 +17,7 @@ app = FastAPI(title="Credential Leak Monitor API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -112,3 +115,22 @@ def get_org_dashboard(org_id: int, db: Session = Depends(get_db)):
         "average_risk_score": round(avg_score, 2),
         "accounts": accounts_data
     }
+
+@app.get("/account-detail/{account_id}", response_model=schemas.AccountDetailResponse)
+async def get_account_detail(account_id: int, db: Session = Depends(get_db)):
+    account = db.query(models.MonitoredAccount).filter(models.MonitoredAccount.id == account_id).first()
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+        
+    return await services.get_detailed_breach_info(account.email)
+
+# Serve Frontend static assets
+app.mount("/assets", StaticFiles(directory="../frontend/dist/assets"), name="assets")
+
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    # If the user asks for a file that exists in the root of dist (like favicon.svg), we should serve it.
+    dist_path = f"../frontend/dist/{full_path}"
+    if os.path.isfile(dist_path):
+        return FileResponse(dist_path)
+    return FileResponse("../frontend/dist/index.html")

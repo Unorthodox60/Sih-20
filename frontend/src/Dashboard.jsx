@@ -6,11 +6,13 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
   const [isAdding, setIsAdding] = useState(false)
   const [isCheckingPassword, setIsCheckingPassword] = useState(false)
   const [passwordResult, setPasswordResult] = useState(null)
+  const [selectedAccountDetail, setSelectedAccountDetail] = useState(null)
+  const [isFetchingDetail, setIsFetchingDetail] = useState(false)
 
   const fetchDashboard = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`http://127.0.0.1:8000/org-dashboard/${orgId}`)
+      const res = await fetch(`/org-dashboard/${orgId}`)
       const result = await res.json()
       setData(result)
     } catch (e) {
@@ -31,18 +33,38 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
     const password = e.target.password.value
     
     try {
-      const res = await fetch(`http://127.0.0.1:8000/check-password?password=${encodeURIComponent(password)}`)
+      const res = await fetch(`/check-password?password=${encodeURIComponent(password)}`)
       if (res.ok) {
         const result = await res.json()
         setPasswordResult(result)
       } else {
-        alert('Error checking password')
+        const errorText = await res.text()
+        alert(`Error checking password: ${res.status} ${res.statusText} - ${errorText}`)
       }
     } catch (e) {
       console.error(e)
-      alert('Error checking password')
+      alert(`Error checking password: ${e.message}`)
     } finally {
       setIsCheckingPassword(false)
+    }
+  }
+
+  const fetchAccountDetail = async (accountId) => {
+    setIsFetchingDetail(true)
+    try {
+      const res = await fetch(`/account-detail/${accountId}`)
+      if (res.ok) {
+        const result = await res.json()
+        setSelectedAccountDetail(result)
+      } else {
+        const errorText = await res.text()
+        alert(`Error fetching details: ${res.status} ${errorText}`)
+      }
+    } catch (e) {
+      console.error(e)
+      alert(`Error fetching details: ${e.message}`)
+    } finally {
+      setIsFetchingDetail(false)
     }
   }
 
@@ -52,7 +74,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
     const email = e.target.email.value
     
     try {
-      const res = await fetch('http://127.0.0.1:8000/add-credential', {
+      const res = await fetch('/add-credential', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, org_id: orgId })
@@ -87,30 +109,30 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
       </div>
 
       {/* Summary Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 animate-slide-up delay-100">
+        <div className="glass-panel p-6 rounded-2xl">
           <p className="text-sm text-gray-400 mb-1">Organization</p>
-          <p className="text-2xl font-bold text-white">{data?.org_name}</p>
+          <p className="text-2xl font-bold text-white truncate">{data?.org_name}</p>
         </div>
-        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+        <div className="glass-panel p-6 rounded-2xl">
           <p className="text-sm text-gray-400 mb-1">Total Accounts</p>
-          <p className="text-3xl font-bold text-blue-400">{data?.total_accounts}</p>
+          <p className="text-4xl font-retro text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">{data?.total_accounts}</p>
         </div>
-        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+        <div className="glass-panel p-6 rounded-2xl">
           <p className="text-sm text-gray-400 mb-1">Avg Risk Score</p>
-          <p className="text-3xl font-bold text-orange-400">{data?.average_risk_score}</p>
+          <p className="text-4xl font-retro text-orange-400 drop-shadow-[0_0_8px_rgba(251,146,60,0.5)]">{data?.average_risk_score}</p>
         </div>
-        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+        <div className="glass-panel p-6 rounded-2xl">
           <p className="text-sm text-gray-400 mb-1">High Risk</p>
-          <p className="text-3xl font-bold text-red-500">{data?.high_risk_count}</p>
+          <p className="text-4xl font-retro text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">{data?.high_risk_count}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column Forms */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className="lg:col-span-1 space-y-6 animate-slide-up delay-200">
           {/* Add Account Form */}
-          <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+          <div className="glass-panel p-6 rounded-2xl">
             <h3 className="text-xl font-bold text-white mb-4">Add Account to Monitor</h3>
             <form onSubmit={handleAddAccount} className="space-y-4">
               <div>
@@ -119,14 +141,14 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
                   name="email" 
                   type="email" 
                   required 
-                  className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-500"
                   placeholder="user@company.com"
                 />
               </div>
               <button 
                 type="submit" 
                 disabled={isAdding}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                className="w-full bg-white text-black font-bold py-3 px-4 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] hover:scale-105 transition-all cursor-pointer disabled:opacity-50 disabled:hover:scale-100"
               >
                 {isAdding ? 'Scanning...' : 'Monitor Account'}
               </button>
@@ -134,7 +156,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
           </div>
 
           {/* Password Checker Form */}
-          <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+          <div className="glass-panel p-6 rounded-2xl">
             <h3 className="text-xl font-bold text-white mb-4">Password Checker</h3>
             <form onSubmit={handleCheckPassword} className="space-y-4">
               <div>
@@ -143,14 +165,14 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
                   name="password" 
                   type="password" 
                   required 
-                  className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-500"
                   placeholder="Enter a password"
                 />
               </div>
               <button 
                 type="submit" 
                 disabled={isCheckingPassword}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                className="w-full bg-white text-black font-bold py-3 px-4 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] hover:scale-105 transition-all cursor-pointer disabled:opacity-50 disabled:hover:scale-100"
               >
                 {isCheckingPassword ? 'Checking...' : 'Check Status'}
               </button>
@@ -175,8 +197,8 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
         </div>
 
         {/* Accounts Table */}
-        <div className="lg:col-span-2 bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-          <div className="p-6 border-b border-gray-800 flex justify-between items-center">
+        <div className="lg:col-span-2 glass-panel rounded-2xl overflow-hidden animate-slide-up delay-300">
+          <div className="p-6 border-b border-gray-700/50 flex justify-between items-center bg-gray-900/20">
             <h3 className="text-xl font-bold text-white">Monitored Accounts</h3>
             <button onClick={fetchDashboard} className="text-sm text-gray-400 hover:text-white cursor-pointer">
               ↻ Refresh
@@ -184,7 +206,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-gray-950 text-gray-400 text-sm">
+              <thead className="bg-gray-900/40 text-gray-400 text-sm">
                 <tr>
                   <th className="px-6 py-4 font-medium">Email</th>
                   <th className="px-6 py-4 font-medium">Risk Score</th>
@@ -201,13 +223,17 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
                   </tr>
                 ) : (
                   data?.accounts?.map((acc) => (
-                    <tr key={acc.id} className="hover:bg-gray-800/50 transition-colors">
+                    <tr 
+                      key={acc.id} 
+                      onClick={() => fetchAccountDetail(acc.id)}
+                      className="hover:bg-gray-800/50 transition-colors cursor-pointer"
+                    >
                       <td className="px-6 py-4 text-gray-200">{acc.email}</td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                          acc.risk_score > 50 ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 
-                          acc.risk_score > 25 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : 
-                          'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          acc.risk_score > 50 ? 'bg-red-500/20 text-red-400 border border-red-500/30 shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 
+                          acc.risk_score > 25 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.3)]' : 
+                          'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
                         }`}>
                           {acc.risk_score}
                         </span>
@@ -236,6 +262,94 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
           </div>
         </div>
       </div>
+
+      {/* Detail Modal overlay */}
+      {selectedAccountDetail && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 overflow-y-auto backdrop-blur-sm">
+          <div className="glass-panel rounded-2xl w-full max-w-3xl my-8 overflow-hidden flex flex-col max-h-[90vh] animate-slide-up">
+            <div className="p-6 border-b border-gray-700/50 flex justify-between items-center bg-gray-900/40 sticky top-0 z-10">
+              <h2 className="text-2xl font-bold text-white">Security Report: {selectedAccountDetail.email}</h2>
+              <button 
+                onClick={() => setSelectedAccountDetail(null)} 
+                className="text-gray-400 hover:text-white text-3xl font-light px-2 cursor-pointer leading-none"
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto space-y-8 bg-gray-900/20">
+              {/* Risk Score */}
+              <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="text-sm text-gray-400 uppercase font-bold tracking-wider">Risk Score</div>
+                  <div className={`text-6xl font-retro ${
+                    selectedAccountDetail.risk_score > 50 ? 'text-red-500' : 
+                    selectedAccountDetail.risk_score > 25 ? 'text-orange-400' : 
+                    'text-emerald-400'
+                  }`}>
+                    {selectedAccountDetail.risk_score}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-gray-300">Score Breakdown:</h4>
+                  {selectedAccountDetail.score_breakdowns?.length > 0 ? (
+                    <ul className="list-disc pl-5 text-sm text-gray-400 space-y-1">
+                      {selectedAccountDetail.score_breakdowns.map((sb, idx) => (
+                        <li key={idx}>{sb.description}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-emerald-500 italic">No risk factors identified.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Recommendations */}
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Recommended Actions</h3>
+                <div className="grid grid-cols-1 gap-3">
+                  {selectedAccountDetail.recommendations?.map((rec, idx) => (
+                    <div key={idx} className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl flex items-start gap-3 text-blue-300">
+                      <span className="text-xl">👉</span>
+                      <p className="text-sm mt-0.5">{rec.action}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Breach List */}
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Detailed Breach History</h3>
+                {selectedAccountDetail.breaches?.length === 0 ? (
+                  <p className="text-gray-400 text-sm">No breaches found for this account.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {selectedAccountDetail.breaches.map((b, idx) => (
+                      <div key={idx} className="bg-gray-950 border border-gray-800 p-5 rounded-xl">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-bold text-lg text-white">{b.name}</h4>
+                          <span className="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded-md">
+                            {b.date ? new Date(b.date).toLocaleDateString() : 'Unknown Date'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-2"><strong className="text-gray-300">Exposed Data:</strong> {b.exposed_data || 'Not specified'}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {isFetchingDetail && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 text-white p-4 rounded-xl shadow-lg border border-gray-800">
+            Loading details...
+          </div>
+        </div>
+      )}
     </main>
   )
 }
