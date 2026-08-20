@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
 export default function Dashboard({ orgId, orgName, onLogout }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -12,7 +14,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
   const fetchDashboard = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/org-dashboard/${orgId}`)
+      const res = await fetch(`${API_BASE_URL}/org-dashboard/${orgId}`)
       const result = await res.json()
       setData(result)
     } catch (e) {
@@ -31,9 +33,9 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
     setIsCheckingPassword(true)
     setPasswordResult(null)
     const password = e.target.password.value
-    
+
     try {
-      const res = await fetch(`/api/check-password?password=${encodeURIComponent(password)}`)
+      const res = await fetch(`${API_BASE_URL}/check-password?password=${encodeURIComponent(password)}`)
       if (res.ok) {
         const result = await res.json()
         setPasswordResult(result)
@@ -52,7 +54,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
   const fetchAccountDetail = async (accountId) => {
     setIsFetchingDetail(true)
     try {
-      const res = await fetch(`/api/account-detail/${accountId}`)
+      const res = await fetch(`${API_BASE_URL}/account-detail/${accountId}`)
       if (res.ok) {
         const result = await res.json()
         setSelectedAccountDetail(result)
@@ -72,9 +74,9 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
     e.preventDefault()
     setIsAdding(true)
     const email = e.target.email.value
-    
+
     try {
-      const res = await fetch('/api/add-credential', {
+      const res = await fetch(`${API_BASE_URL}/add-credential`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, org_id: orgId })
@@ -100,7 +102,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
   return (
     <main className="max-w-6xl mx-auto space-y-8">
       <div className="flex justify-end">
-        <button 
+        <button
           onClick={onLogout}
           className="text-sm text-gray-400 hover:text-white cursor-pointer border border-gray-800 px-4 py-2 rounded-lg bg-gray-900"
         >
@@ -109,46 +111,46 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
       </div>
 
       {/* Summary Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 animate-slide-up delay-100">
-        <div className="glass-panel p-6 rounded-2xl">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
           <p className="text-sm text-gray-400 mb-1">Organization</p>
-          <p className="text-2xl font-bold text-white truncate">{data?.org_name}</p>
+          <p className="text-2xl font-bold text-white">{data?.org_name}</p>
         </div>
-        <div className="glass-panel p-6 rounded-2xl">
+        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
           <p className="text-sm text-gray-400 mb-1">Total Accounts</p>
-          <p className="text-4xl font-retro text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">{data?.total_accounts}</p>
+          <p className="text-3xl font-bold text-blue-400">{data?.total_accounts}</p>
         </div>
-        <div className="glass-panel p-6 rounded-2xl">
+        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
           <p className="text-sm text-gray-400 mb-1">Avg Risk Score</p>
-          <p className="text-4xl font-retro text-orange-400 drop-shadow-[0_0_8px_rgba(251,146,60,0.5)]">{data?.average_risk_score}</p>
+          <p className="text-3xl font-bold text-orange-400">{data?.average_risk_score}</p>
         </div>
-        <div className="glass-panel p-6 rounded-2xl">
+        <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
           <p className="text-sm text-gray-400 mb-1">High Risk</p>
-          <p className="text-4xl font-retro text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">{data?.high_risk_count}</p>
+          <p className="text-3xl font-bold text-red-500">{data?.high_risk_count}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column Forms */}
-        <div className="lg:col-span-1 space-y-6 animate-slide-up delay-200">
+        <div className="lg:col-span-1 space-y-6">
           {/* Add Account Form */}
-          <div className="glass-panel p-6 rounded-2xl">
+          <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
             <h3 className="text-xl font-bold text-white mb-4">Add Account to Monitor</h3>
             <form onSubmit={handleAddAccount} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
-                <input 
-                  name="email" 
-                  type="email" 
-                  required 
-                  className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-500"
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   placeholder="user@company.com"
                 />
               </div>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isAdding}
-                className="w-full bg-white text-black font-bold py-3 px-4 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] hover:scale-105 transition-all cursor-pointer disabled:opacity-50 disabled:hover:scale-100"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
               >
                 {isAdding ? 'Scanning...' : 'Monitor Account'}
               </button>
@@ -156,23 +158,23 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
           </div>
 
           {/* Password Checker Form */}
-          <div className="glass-panel p-6 rounded-2xl">
+          <div className="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
             <h3 className="text-xl font-bold text-white mb-4">Password Checker</h3>
             <form onSubmit={handleCheckPassword} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Test a Password</label>
-                <input 
-                  name="password" 
-                  type="password" 
-                  required 
-                  className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-500"
+                <input
+                  name="password"
+                  type="password"
+                  required
+                  className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   placeholder="Enter a password"
                 />
               </div>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={isCheckingPassword}
-                className="w-full bg-white text-black font-bold py-3 px-4 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.6)] hover:scale-105 transition-all cursor-pointer disabled:opacity-50 disabled:hover:scale-100"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
               >
                 {isCheckingPassword ? 'Checking...' : 'Check Status'}
               </button>
@@ -197,8 +199,8 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
         </div>
 
         {/* Accounts Table */}
-        <div className="lg:col-span-2 glass-panel rounded-2xl overflow-hidden animate-slide-up delay-300">
-          <div className="p-6 border-b border-gray-700/50 flex justify-between items-center bg-gray-900/20">
+        <div className="lg:col-span-2 bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+          <div className="p-6 border-b border-gray-800 flex justify-between items-center">
             <h3 className="text-xl font-bold text-white">Monitored Accounts</h3>
             <button onClick={fetchDashboard} className="text-sm text-gray-400 hover:text-white cursor-pointer">
               ↻ Refresh
@@ -206,7 +208,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-gray-900/40 text-gray-400 text-sm">
+              <thead className="bg-gray-950 text-gray-400 text-sm">
                 <tr>
                   <th className="px-6 py-4 font-medium">Email</th>
                   <th className="px-6 py-4 font-medium">Risk Score</th>
@@ -223,18 +225,17 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
                   </tr>
                 ) : (
                   data?.accounts?.map((acc) => (
-                    <tr 
-                      key={acc.id} 
+                    <tr
+                      key={acc.id}
                       onClick={() => fetchAccountDetail(acc.id)}
                       className="hover:bg-gray-800/50 transition-colors cursor-pointer"
                     >
                       <td className="px-6 py-4 text-gray-200">{acc.email}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                          acc.risk_score > 50 ? 'bg-red-500/20 text-red-400 border border-red-500/30 shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 
-                          acc.risk_score > 25 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.3)]' : 
-                          'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
-                        }`}>
+                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${acc.risk_score > 50 ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                            acc.risk_score > 25 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
+                              'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                          }`}>
                           {acc.risk_score}
                         </span>
                       </td>
@@ -265,28 +266,27 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
 
       {/* Detail Modal overlay */}
       {selectedAccountDetail && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 overflow-y-auto backdrop-blur-sm">
-          <div className="glass-panel rounded-2xl w-full max-w-3xl my-8 overflow-hidden flex flex-col max-h-[90vh] animate-slide-up">
-            <div className="p-6 border-b border-gray-700/50 flex justify-between items-center bg-gray-900/40 sticky top-0 z-10">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-3xl my-8 overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900 sticky top-0 z-10">
               <h2 className="text-2xl font-bold text-white">Security Report: {selectedAccountDetail.email}</h2>
-              <button 
-                onClick={() => setSelectedAccountDetail(null)} 
-                className="text-gray-400 hover:text-white text-3xl font-light px-2 cursor-pointer leading-none"
+              <button
+                onClick={() => setSelectedAccountDetail(null)}
+                className="text-gray-400 hover:text-white text-2xl font-bold px-2 cursor-pointer"
               >
                 &times;
               </button>
             </div>
-            
-            <div className="p-6 overflow-y-auto space-y-8 bg-gray-900/20">
+
+            <div className="p-6 overflow-y-auto space-y-8">
               {/* Risk Score */}
-              <div className="bg-gray-900/50 p-6 rounded-xl border border-gray-700/50">
+              <div className="bg-gray-950 p-6 rounded-xl border border-gray-800">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="text-sm text-gray-400 uppercase font-bold tracking-wider">Risk Score</div>
-                  <div className={`text-6xl font-retro ${
-                    selectedAccountDetail.risk_score > 50 ? 'text-red-500' : 
-                    selectedAccountDetail.risk_score > 25 ? 'text-orange-400' : 
-                    'text-emerald-400'
-                  }`}>
+                  <div className={`text-4xl font-black ${selectedAccountDetail.risk_score > 50 ? 'text-red-500' :
+                      selectedAccountDetail.risk_score > 25 ? 'text-orange-400' :
+                        'text-emerald-400'
+                    }`}>
                     {selectedAccountDetail.risk_score}
                   </div>
                 </div>
@@ -342,7 +342,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
           </div>
         </div>
       )}
-      
+
       {isFetchingDetail && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gray-900 text-white p-4 rounded-xl shadow-lg border border-gray-800">
