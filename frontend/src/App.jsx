@@ -8,7 +8,7 @@ function App() {
   const [isCreatingNew, setIsCreatingNew] = useState(false)
 
   const fetchOrgs = () => {
-    fetch('/organizations')
+    fetch('/api/organizations')
       .then(res => res.json())
       .then(data => {
         setOrgs(data)
@@ -26,7 +26,7 @@ function App() {
   const handleRegister = async (e) => {
     e.preventDefault()
     const name = e.target.orgName.value
-    const res = await fetch('/register-org', {
+    const res = await fetch('/api/register-org', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })

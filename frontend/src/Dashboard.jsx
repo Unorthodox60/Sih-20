@@ -12,7 +12,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
   const fetchDashboard = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`/org-dashboard/${orgId}`)
+      const res = await fetch(`/api/org-dashboard/${orgId}`)
       const result = await res.json()
       setData(result)
     } catch (e) {
@@ -33,7 +33,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
     const password = e.target.password.value
     
     try {
-      const res = await fetch(`/check-password?password=${encodeURIComponent(password)}`)
+      const res = await fetch(`/api/check-password?password=${encodeURIComponent(password)}`)
       if (res.ok) {
         const result = await res.json()
         setPasswordResult(result)
@@ -52,7 +52,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
   const fetchAccountDetail = async (accountId) => {
     setIsFetchingDetail(true)
     try {
-      const res = await fetch(`/account-detail/${accountId}`)
+      const res = await fetch(`/api/account-detail/${accountId}`)
       if (res.ok) {
         const result = await res.json()
         setSelectedAccountDetail(result)
@@ -74,7 +74,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
     const email = e.target.email.value
     
     try {
-      const res = await fetch('/add-credential', {
+      const res = await fetch('/api/add-credential', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, org_id: orgId })

@@ -123,14 +123,3 @@ async def get_account_detail(account_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Account not found")
         
     return await services.get_detailed_breach_info(account.email)
-
-# Serve Frontend static assets
-app.mount("/assets", StaticFiles(directory="../frontend/dist/assets"), name="assets")
-
-@app.get("/{full_path:path}")
-async def serve_frontend(full_path: str):
-    # If the user asks for a file that exists in the root of dist (like favicon.svg), we should serve it.
-    dist_path = f"../frontend/dist/{full_path}"
-    if os.path.isfile(dist_path):
-        return FileResponse(dist_path)
-    return FileResponse("../frontend/dist/index.html")
