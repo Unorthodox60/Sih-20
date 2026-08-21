@@ -1,119 +1,92 @@
 # Credential Leak & Dark Web Exposure Monitor
 
-This project is a web application designed to monitor organizational accounts for data breaches and password leaks. It utilizes the HaveIBeenPwned (k-anonymity) and XposedOrNot APIs to check credentials and computes a risk score for each monitored account.
+Web app for monitoring organizational emails against data breaches and checking passwords via Have I Been Pwned (k-anonymity) and XposedOrNot.
 
 ## Backend Setup
 
-1. **Clone the repository:**
+1. **Clone and enter the backend directory:**
    ```bash
    git clone https://github.com/Unorthodox60/Sih-20.git
-   cd Sih-20/backend
+   cd "Sih-20/backend"
    ```
 
 2. **Create and activate a virtual environment:**
    ```bash
    python3 -m venv venv
-   source venv/bin/activate  # On Windows use: venv\Scripts\activate
+   source venv/bin/activate  # Windows: venv\Scripts\activate
    ```
 
-3. **Install the dependencies:**
+3. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run the FastAPI server:**
+4. **Run the API:**
    ```bash
    uvicorn main:app --reload --port 8000
    ```
 
-## Frontend Developer Notes
+### Environment variables (backend)
 
-* **Base URL:** The backend runs locally at `http://127.0.0.1:8000`.
-* **CORS:** Cross-Origin Resource Sharing is already enabled for the frontend (allowed origins: `http://localhost:5173` and `http://127.0.0.1:5173`).
-* **Interactive API Docs:** You can test all endpoints, view schemas, and see detailed documentation via Swagger UI at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `DATABASE_URL` | `sqlite:///./monitor.db` | SQLAlchemy URL. Use PostgreSQL on Render for persistent storage. |
+| `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173` | Comma-separated frontend origins allowed by CORS. |
+
+## Frontend Setup
+
+```bash
+cd frontend
+cp .env.example .env   # optional for local dev
+npm install
+npm run dev
+```
+
+Set `VITE_API_URL` in `.env` locally, or in Netlify site environment variables for production builds.
 
 ## API Endpoints
 
-### 1. Check Password Leak
-**GET** `/check-password?password={password}`
-*   **Description:** Checks if a password has been leaked using HaveIBeenPwned API.
-*   **Response:**
-    ```json
-    {
-      "leaked": true,
-      "times_seen": 42
-    }
-    ```
+Interactive docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-### 2. Check Email Breach
+### Check Password Leak
+**POST** `/check-password`
+```json
+{ "password": "your-password-here" }
+```
+Response: `{ "leaked": true, "times_seen": 42 }`
+
+### Check Email Breach
 **GET** `/check-email?email={email}`
-*   **Description:** Checks if an email has been exposed in data breaches using XposedOrNot API.
-*   **Response:**
-    ```json
-    {
-      "breached": true,
-      "breach_list": ["Breach1", "Breach2"]
-    }
-    ```
 
-### 3. Register Organization
-**POST** `/register-org`
-*   **Description:** Registers a new organization to group monitored accounts.
-*   **Request Body:**
-    ```json
-    {
-      "name": "Hackathon Team"
-    }
-    ```
-*   **Response:**
-    ```json
-    {
-      "name": "Hackathon Team",
-      "id": 1
-    }
-    ```
+### Register Organization
+**POST** `/register-org` — returns **409** if the name already exists.
 
-### 4. Add Credential to Monitor
+### Add Credential
 **POST** `/add-credential`
-*   **Description:** Adds an email to be monitored under a specific organization. Computes the initial risk score.
-*   **Request Body:**
-    ```json
-    {
-      "email": "test@example.com",
-      "org_id": 1
-    }
-    ```
-*   **Response:**
-    ```json
-    {
-      "email": "test@example.com",
-      "risk_score": 20.0,
-      "last_checked": "2026-08-15T15:00:00.000000",
-      "breaches": "[\"Breach1\"]",
-      "id": 1,
-      "org_id": 1
-    }
-    ```
+```json
+{ "email": "test@example.com", "org_id": 1 }
+```
 
-### 5. Organization Dashboard
+### Rescan Account
+**POST** `/accounts/{account_id}/rescan`
+
+### Delete Account
+**DELETE** `/accounts/{account_id}`
+
+### Organization Dashboard
 **GET** `/org-dashboard/{org_id}`
-*   **Description:** Retrieves a summary of all accounts monitored by an organization, including aggregated stats.
-*   **Response:**
-    ```json
-    {
-      "org_name": "Hackathon Team",
-      "total_accounts": 1,
-      "breached_accounts": 1,
-      "high_risk_count": 0,
-      "average_risk_score": 20.0,
-      "accounts": [
-        {
-          "id": 1,
-          "email": "test@example.com",
-          "risk_score": 20.0,
-          "last_checked": "2026-08-15T15:00:00.000000",
-          "breaches": ["Breach1"]
-        }
-      ]
-    }
-    ```
+
+### Account Detail
+**GET** `/account-detail/{account_id}` — refreshes risk score and `last_checked` in the database.
+
+### List Organizations
+**GET** `/organizations`
+
+## Deployment notes
+
+- **Render (backend):** Set `DATABASE_URL` to a PostgreSQL instance for persistent data. Set `CORS_ORIGINS` to your Netlify URL.
+- **Netlify (frontend):** Set `VITE_API_URL` to your Render backend URL before building.
+
+## Demo disclaimer
+
+This project intentionally has **no authentication** for demo/hackathon use. Do not use with real sensitive data in production without adding auth and access controls.

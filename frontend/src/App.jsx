@@ -39,6 +39,8 @@ function App() {
     if (res.ok) {
       setOrgId(data.id)
       setOrgName(data.name)
+    } else if (res.status === 409) {
+      alert('An organization with that name already exists. Please choose a different name.')
     } else {
       alert(data.detail || 'Error registering organization')
     }
