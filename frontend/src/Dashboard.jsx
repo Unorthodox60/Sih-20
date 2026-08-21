@@ -12,7 +12,7 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
   const [selectedAccountDetail, setSelectedAccountDetail] = useState(null)
   const [isFetchingDetail, setIsFetchingDetail] = useState(false)
   const [rescanningId, setRescanningId] = useState(null)
-  
+
   const [honeytokens, setHoneytokens] = useState([])
   const [isGeneratingToken, setIsGeneratingToken] = useState(false)
   const [generatedTokenUrl, setGeneratedTokenUrl] = useState(null)
@@ -50,12 +50,12 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
   useEffect(() => {
     fetchDashboard()
     fetchHoneytokens()
-    
+
     // Auto-update honeytokens every 5 seconds
     const intervalId = setInterval(() => {
       fetchHoneytokens(false)
     }, 5000)
-    
+
     return () => clearInterval(intervalId)
   }, [orgId])
 
@@ -443,12 +443,12 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
         <div className="lg:col-span-2 bg-gray-900/95 border border-gray-800 rounded-2xl overflow-hidden flex flex-col shadow-sm">
           <div className="px-6 py-5 border-b border-gray-800/60 flex justify-between items-center bg-gray-900/20">
             <h3 className="text-lg font-bold text-white tracking-tight">Active Honeytokens</h3>
-            <button 
-              onClick={() => fetchHoneytokens(true)} 
+            <button
+              onClick={() => fetchHoneytokens(true)}
               disabled={isRefreshingTokens}
               className="text-xs font-medium text-gray-400 hover:text-white flex items-center gap-1.5 transition-colors bg-black/80 hover:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-800 cursor-pointer disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshingTokens ? 'animate-spin' : ''}`} /> 
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshingTokens ? 'animate-spin' : ''}`} />
               {isRefreshingTokens ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>

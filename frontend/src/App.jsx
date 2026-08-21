@@ -71,8 +71,20 @@ function App() {
 
   return (
     <>
-      <div className="cyber-bg"></div>
-      <div className="cyber-grid"></div>
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="fixed inset-0 w-full h-full object-cover z-[-2] pointer-events-none"
+        style={{ filter: 'brightness(0.4) saturate(0.3) contrast(1.1)' }}
+      >
+        <source
+          src="/bg-video.mp4"
+          type="video/mp4"
+        />
+      </video>
+      <div className="fixed inset-0 z-[-1] bg-black/80 pointer-events-none"></div>
 
       <nav className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center bg-transparent pointer-events-none">
         <div className="flex items-center gap-2.5 pointer-events-auto">
@@ -114,18 +126,18 @@ function App() {
                   <div className="space-y-4">
                     <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar animate-fade-up" style={{ animationDelay: '0.4s' }}>
                       {orgs.map((org, i) => (
-                        <div key={org.id} className="relative group/item animate-fade-up" style={{ animationDelay: `${0.4 + (i * 0.06)}s` }}>
+                        <div key={org.id} className="relative w-full group/org animate-fade-up" style={{ animationDelay: `${0.4 + (i * 0.06)}s` }}>
                           <button
                             onClick={() => handleSelectOrg(org.id, org.name)}
-                            className="w-full text-left bg-gray-900/95 border border-gray-800 hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-foreground transition-all duration-150 cursor-pointer flex items-center justify-between group"
+                            className="w-full text-left bg-gray-900/95 border border-gray-800 hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 pr-12 text-foreground transition-all duration-150 cursor-pointer flex items-center justify-between group"
                           >
-                            <span className="font-medium text-gray-300 group-hover:text-white transition-colors pr-8">{org.name}</span>
+                            <span className="font-medium text-gray-300 group-hover:text-white transition-colors">{org.name}</span>
                             <ArrowRight className="w-4 h-4 text-primary opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150" />
                           </button>
                           <button 
                             onClick={(e) => handleDeleteOrg(org.id, e)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-all z-10 cursor-pointer rounded-lg hover:bg-red-500/10"
-                            title="Delete workspace"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-md opacity-0 group-hover/org:opacity-100 transition-all z-10 cursor-pointer"
+                            title="Delete Workspace"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

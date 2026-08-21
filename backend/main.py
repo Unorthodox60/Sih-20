@@ -72,21 +72,6 @@ def register_org(org: schemas.OrganizationCreate, db: Session = Depends(get_db))
 def get_organizations(db: Session = Depends(get_db)):
     return db.query(models.Organization).all()
 
-@app.delete("/organizations/{org_id}")
-def delete_organization(org_id: int, db: Session = Depends(get_db)):
-    org = db.query(models.Organization).filter(models.Organization.id == org_id).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
-    
-    # Delete associated accounts and honeytokens
-    db.query(models.MonitoredAccount).filter(models.MonitoredAccount.org_id == org_id).delete()
-    db.query(models.HoneyToken).filter(models.HoneyToken.org_id == org_id).delete()
-    
-    # Delete the organization
-    db.delete(org)
-    db.commit()
-    return {"deleted": True, "id": org_id}
-
 
 @app.post("/add-credential", response_model=schemas.MonitoredAccount)
 async def add_credential(account: schemas.AccountCreate, db: Session = Depends(get_db)):
@@ -231,6 +216,21 @@ def get_honeytoken_status(org_id: int, db: Session = Depends(get_db)):
         
     tokens = db.query(models.HoneyToken).filter(models.HoneyToken.org_id == org_id).order_by(models.HoneyToken.created_at.desc()).all()
     return tokens
+
+
+@app.get("/honeytoken-trigger/{token}")
+def trigger_honeytoken(token: str, request: Request, db: Session = Depends(get_db)):
+    db_token = db.query(models.HoneyToken).filter(models.HoneyToken.token == token).first()
+    if not db_token:
+        raise HTTPException(status_code=404, detail="Invalid credentials")
+        
+    db_token.triggered = True
+    db_token.triggered_at = datetime.datetime.utcnow()
+    db_token.trigger_ip = request.client.host if request.client else None
+    db_token.trigger_user_agent = request.headers.get("user-agent")
+    
+    db.commit()
+    return {"error": "Invalid credentials"}
 
 
 @app.get("/honeytoken-trigger/{token}")
