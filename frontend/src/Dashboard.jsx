@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Building, Users, Activity, AlertTriangle, ShieldCheck, RefreshCw, Plus, Key, CheckCircle, XCircle, ShieldAlert, Calendar, Trash2 } from 'lucide-react'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000`;
 
 export default function Dashboard({ orgId, orgName, onLogout }) {
   const [data, setData] = useState(null)
@@ -456,10 +456,12 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
             <table className="w-full text-left border-collapse">
               <thead className="bg-black/20 text-gray-400 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 font-semibold">Token ID</th>
                   <th className="px-6 py-4 font-semibold">Label</th>
                   <th className="px-6 py-4 font-semibold">Created Date</th>
                   <th className="px-6 py-4 font-semibold">Status</th>
                   <th className="px-6 py-4 font-semibold">Trigger Info</th>
+                  <th className="px-6 py-4 font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800/50">
@@ -472,6 +474,9 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
                 ) : (
                   honeytokens.map((token) => (
                     <tr key={token.id} className="hover:bg-gray-800/30 transition-colors">
+                      <td className="px-6 py-4 text-xs font-mono text-gray-500">
+                        {token.token.substring(0, 8)}...
+                      </td>
                       <td className="px-6 py-4 text-sm text-white font-medium">{token.label}</td>
                       <td className="px-6 py-4 text-xs text-gray-500">
                         {new Date(token.created_at).toLocaleDateString()}
@@ -496,6 +501,18 @@ export default function Dashboard({ orgId, orgName, onLogout }) {
                         ) : (
                           <span className="text-gray-600">—</span>
                         )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(`${API_BASE_URL}/honeytoken-trigger/${token.token}`);
+                            alert('Trigger URL copied to clipboard!');
+                          }}
+                          className="text-xs text-purple-400 hover:text-purple-300 p-1.5 rounded border border-purple-500/30 hover:border-purple-500 cursor-pointer transition-colors"
+                          title="Copy Trigger URL"
+                        >
+                          Copy URL
+                        </button>
                       </td>
                     </tr>
                   ))

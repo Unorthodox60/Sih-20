@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import Dashboard from './Dashboard'
-import { Building2, ArrowRight } from 'lucide-react'
+import { Building2, ArrowRight, Trash2 } from 'lucide-react'
 import './index.css'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000`;
 
 function App() {
   const [orgId, setOrgId] = useState(null)
@@ -49,6 +49,24 @@ function App() {
   const handleSelectOrg = (id, name) => {
     setOrgId(id)
     setOrgName(name)
+  }
+
+  const handleDeleteOrg = async (id, e) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to delete this workspace and ALL its data?")) return;
+    
+    try {
+      const res = await fetch(`${API_BASE_URL}/organizations/${id}`, {
+        method: 'DELETE'
+      })
+      if (res.ok) {
+        fetchOrgs();
+      } else {
+        alert("Failed to delete workspace.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (
@@ -108,15 +126,22 @@ function App() {
                   <div className="space-y-4">
                     <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar animate-fade-up" style={{ animationDelay: '0.4s' }}>
                       {orgs.map((org, i) => (
-                        <button
-                          key={org.id}
-                          onClick={() => handleSelectOrg(org.id, org.name)}
-                          className="w-full text-left bg-gray-900/95 border border-gray-800 hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-foreground transition-all duration-150 cursor-pointer flex items-center justify-between group animate-fade-up"
-                          style={{ animationDelay: `${0.4 + (i * 0.06)}s` }}
-                        >
-                          <span className="font-medium text-gray-300 group-hover:text-white transition-colors">{org.name}</span>
-                          <ArrowRight className="w-4 h-4 text-primary opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150" />
-                        </button>
+                        <div key={org.id} className="relative group/item animate-fade-up" style={{ animationDelay: `${0.4 + (i * 0.06)}s` }}>
+                          <button
+                            onClick={() => handleSelectOrg(org.id, org.name)}
+                            className="w-full text-left bg-gray-900/95 border border-gray-800 hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-foreground transition-all duration-150 cursor-pointer flex items-center justify-between group"
+                          >
+                            <span className="font-medium text-gray-300 group-hover:text-white transition-colors pr-8">{org.name}</span>
+                            <ArrowRight className="w-4 h-4 text-primary opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150" />
+                          </button>
+                          <button 
+                            onClick={(e) => handleDeleteOrg(org.id, e)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-all z-10 cursor-pointer rounded-lg hover:bg-red-500/10"
+                            title="Delete workspace"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       ))}
                     </div>
                     <div className="mt-6 pt-5 border-t border-gray-800/50 animate-fade-up" style={{ animationDelay: '0.5s' }}>

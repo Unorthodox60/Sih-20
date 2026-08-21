@@ -26,7 +26,7 @@ _cors_origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_cors_origins,
+    allow_origins=["*"], # Allow all origins so laptops on the same network can access
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -71,6 +71,21 @@ def register_org(org: schemas.OrganizationCreate, db: Session = Depends(get_db))
 @app.get("/organizations", response_model=list[schemas.Organization])
 def get_organizations(db: Session = Depends(get_db)):
     return db.query(models.Organization).all()
+
+@app.delete("/organizations/{org_id}")
+def delete_organization(org_id: int, db: Session = Depends(get_db)):
+    org = db.query(models.Organization).filter(models.Organization.id == org_id).first()
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    
+    # Delete associated accounts and honeytokens
+    db.query(models.MonitoredAccount).filter(models.MonitoredAccount.org_id == org_id).delete()
+    db.query(models.HoneyToken).filter(models.HoneyToken.org_id == org_id).delete()
+    
+    # Delete the organization
+    db.delete(org)
+    db.commit()
+    return {"deleted": True, "id": org_id}
 
 
 @app.post("/add-credential", response_model=schemas.MonitoredAccount)
