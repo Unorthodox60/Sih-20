@@ -61,3 +61,35 @@ body {
   min-height: 100vh;
   @apply font-sora antialiased bg-background text-foreground;
 }
+
+@keyframes mesh {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+.cyber-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background-color: #050505;
+  background-image: 
+    radial-gradient(at 20% 30%, rgba(22, 163, 74, 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 70%, rgba(22, 163, 74, 0.1) 0px, transparent 50%);
+  background-size: 200% 200%;
+  animation: mesh 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.cyber-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}

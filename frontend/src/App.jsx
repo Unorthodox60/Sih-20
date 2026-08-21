@@ -71,20 +71,8 @@ function App() {
 
   return (
     <>
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="fixed inset-0 w-full h-full object-cover z-[-2] pointer-events-none"
-        style={{ filter: 'brightness(0.4) saturate(0.3) contrast(1.1)' }}
-      >
-        <source 
-          src="/bg-video.mp4" 
-          type="video/mp4" 
-        />
-      </video>
-      <div className="fixed inset-0 z-[-1] bg-black/80 pointer-events-none"></div>
+      <div className="cyber-bg"></div>
+      <div className="cyber-grid"></div>
 
       <nav className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center bg-transparent pointer-events-none">
         <div className="flex items-center gap-2.5 pointer-events-auto">
