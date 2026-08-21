@@ -2,8 +2,7 @@
   command = "cd frontend && npm install && npm run build"
   publish = "frontend/dist"
 
-# Set VITE_API_URL in Netlify site settings to your Render backend URL, e.g.:
-# https://credential-leak-monitor-backend.onrender.com
+# Set VITE_API_URL in Netlify site settings to your Render backend URL
 
 [[redirects]]
   from = "/*"
