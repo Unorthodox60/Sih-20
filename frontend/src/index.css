@@ -1,20 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sora: "Sora", sans-serif;
-  --font-sans: "Sora", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
 
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-destructive: hsl(var(--destructive));
-  --color-border: hsl(var(--border));
-  --color-hero-bg: hsl(var(--hero-bg));
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-text-sec: var(--text-sec);
 
   --radius: var(--radius);
 
@@ -23,18 +20,14 @@
 }
 
 :root {
-  --background: 0 0% 10%;
-  --foreground: 0 0% 96%;
-  --primary: 119 99% 46%;
-  --primary-foreground: 0 0% 4%;
-  --secondary: 0 0% 18%;
-  --muted: 0 0% 16%;
-  --muted-foreground: 0 0% 60%;
-  --accent: 119 99% 46%;
-  --destructive: 0 84% 60%;
-  --border: 0 0% 20%;
+  --background: #06090a;
+  --foreground: #e9f2ec;
+  --primary: #39ff6a;
+  --primary-foreground: #06090a;
+  --card-bg: #0e1a16;
+  --card-border: rgba(57,255,106,0.14);
+  --text-sec: #8ba396;
   --radius: 0.5rem;
-  --hero-bg: 0 0% 8%;
 }
 
 @keyframes fade-up {
@@ -67,7 +60,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  @apply font-sora antialiased bg-background text-foreground;
+  @apply font-sans antialiased bg-background text-foreground;
 }
 
 @keyframes mesh {
