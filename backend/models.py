@@ -11,7 +11,7 @@ class Organization(Base):
     name = Column(String, unique=True, index=True)
 
     accounts = relationship("MonitoredAccount", back_populates="organization")
-
+    honey_tokens = relationship("HoneyToken", back_populates="organization")
 
 
 class MonitoredAccount(Base):
@@ -27,5 +27,20 @@ class MonitoredAccount(Base):
     breaches = Column(String, default="[]") 
     
     organization = relationship("Organization", back_populates="accounts")
+
+class HoneyToken(Base):
+    __tablename__ = "honey_tokens"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String, unique=True, index=True)
+    org_id = Column(Integer, ForeignKey("organizations.id"))
+    label = Column(String, default="Decoy Credential")
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    triggered = Column(Boolean, default=False)
+    triggered_at = Column(DateTime, nullable=True)
+    trigger_ip = Column(String, nullable=True)
+    trigger_user_agent = Column(String, nullable=True)
+
+    organization = relationship("Organization", back_populates="honey_tokens")
 
 

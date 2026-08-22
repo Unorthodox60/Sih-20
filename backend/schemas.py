@@ -74,3 +74,21 @@ class AccountDetailResponse(BaseModel):
     score_breakdowns: List[ScoreBreakdown]
     recommendations: List[RecommendedAction]
 
+
+class HoneyTokenCreate(BaseModel):
+    org_id: int
+    label: Optional[str] = "Decoy Credential"
+
+class HoneyToken(BaseModel):
+    id: int
+    token: str
+    org_id: int
+    label: str
+    created_at: datetime
+    triggered: bool
+    triggered_at: Optional[datetime] = None
+    trigger_ip: Optional[str] = None
+    trigger_user_agent: Optional[str] = None
+
+    class Config:
+        from_attributes = True
