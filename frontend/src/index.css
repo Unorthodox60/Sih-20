@@ -1,33 +1,40 @@
 @import "tailwindcss";
 
 @theme {
-  --font-inter: "Inter", sans-serif;
-  --font-sans: "Inter", sans-serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-sora: "Sora", sans-serif;
+  --font-sans: "Sora", sans-serif;
 
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-card-bg: var(--card-bg);
-  --color-card-border: var(--card-border);
-  --color-text-sec: var(--text-sec);
-
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-hero-bg: hsl(var(--hero-bg));
+  
   --radius: var(--radius);
-
+  
   --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-fade-in: fade-in 0.5s ease-out both;
 }
 
 :root {
-  --background: #06090a;
-  --foreground: #e9f2ec;
-  --primary: #39ff6a;
-  --primary-foreground: #06090a;
-  --card-bg: #0e1a16;
-  --card-border: rgba(57,255,106,0.14);
-  --text-sec: #8ba396;
+  --background: 0 0% 10%;
+  --foreground: 0 0% 96%;
+  --primary: 119 99% 46%;
+  --primary-foreground: 0 0% 4%;
+  --secondary: 0 0% 18%;
+  --muted: 0 0% 16%;
+  --muted-foreground: 0 0% 60%;
+  --accent: 119 99% 46%;
+  --destructive: 0 84% 60%;
+  --border: 0 0% 20%;
   --radius: 0.5rem;
+  --hero-bg: 0 0% 8%;
 }
 
 @keyframes fade-up {
@@ -36,7 +43,6 @@
     transform: translateY(20px);
     filter: blur(4px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -45,60 +51,13 @@
 }
 
 @keyframes fade-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  @apply font-sans antialiased bg-background text-foreground;
-}
-
-@keyframes mesh {
-  0% {
-    background-position: 0% 0%;
-  }
-
-  50% {
-    background-position: 100% 100%;
-  }
-
-  100% {
-    background-position: 0% 0%;
-  }
-}
-
-.cyber-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -3;
-  background-color: #050505;
-  background-image:
-    radial-gradient(at 20% 30%, rgba(22, 163, 74, 0.15) 0px, transparent 50%),
-    radial-gradient(at 80% 70%, rgba(22, 163, 74, 0.1) 0px, transparent 50%);
-  background-size: 200% 200%;
-  animation: mesh 20s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.cyber-grid {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  @apply font-sora antialiased bg-background text-foreground;
 }

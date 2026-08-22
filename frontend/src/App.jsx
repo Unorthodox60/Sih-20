@@ -79,17 +79,17 @@ function App() {
         className="fixed inset-0 w-full h-full object-cover z-[-2] pointer-events-none"
         style={{ filter: 'brightness(0.4) saturate(0.3) contrast(1.1)' }}
       >
-        <source
-          src="/bg-video.mp4"
-          type="video/mp4"
+        <source 
+          src="/bg-video.mp4" 
+          type="video/mp4" 
         />
       </video>
-      <div className="fixed inset-0 z-[-1] bg-background/80 pointer-events-none"></div>
+      <div className="fixed inset-0 z-[-1] bg-black/80 pointer-events-none"></div>
 
       <nav className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center bg-transparent pointer-events-none">
         <div className="flex items-center gap-2.5 pointer-events-auto">
           <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></div>
-          <div className="text-foreground text-xl font-bold tracking-tight">Wero</div>
+          <div className="text-white text-xl font-bold tracking-tight">Wero</div>
         </div>
       </nav>
 
@@ -105,20 +105,20 @@ function App() {
                   SYSTEM ACTIVE
                 </div>
                 <h1 className="text-[clamp(2.5rem,5vw,5rem)] font-extrabold tracking-tight uppercase leading-[1.05] animate-fade-up" style={{ animationDelay: '0.16s' }}>
-                  <span className="text-foreground">DARK WEB</span><br />
+                  <span className="text-white">DARK WEB</span><br />
                   <span className="text-primary">MONITOR</span>
                 </h1>
-                <p className="text-text-sec text-lg max-w-xl font-medium tracking-wide animate-fade-up" style={{ animationDelay: '0.22s' }}>
+                <p className="text-gray-400 text-lg max-w-xl font-medium tracking-wide animate-fade-up" style={{ animationDelay: '0.22s' }}>
                   Track credential leaks, analyze breach exposure, and secure your organizational identities in real-time.
                 </p>
               </header>
 
               {/* Right Column (Workspace Card) */}
-              <main className="lg:col-span-5 w-full max-w-md mx-auto lg:ml-auto bg-card-bg border border-card-border rounded-2xl shadow-[0_0_40px_-10px_rgba(0,0,0,0.7),0_0_20px_-10px_rgba(34,197,94,0.1)] backdrop-blur-md p-8 animate-fade-up relative" style={{ animationDelay: '0.28s' }}>
+              <main className="lg:col-span-5 w-full max-w-md mx-auto lg:ml-auto bg-gray-950/95 border border-white/10 rounded-2xl shadow-[0_0_40px_-10px_rgba(0,0,0,0.7),0_0_20px_-10px_rgba(34,197,94,0.1)] backdrop-blur-md p-8 animate-fade-up relative" style={{ animationDelay: '0.28s' }}>
                 {/* Vertical thin line anchor */}
                 <div className="absolute -left-12 top-10 bottom-10 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent hidden lg:block"></div>
 
-                <h2 className="text-2xl font-bold mb-6 text-foreground tracking-tight animate-fade-up" style={{ animationDelay: '0.34s' }}>
+                <h2 className="text-2xl font-bold mb-6 text-white tracking-tight animate-fade-up" style={{ animationDelay: '0.34s' }}>
                   {isCreatingNew ? 'Create New Workspace' : 'Select a Workspace'}
                 </h2>
 
@@ -126,28 +126,28 @@ function App() {
                   <div className="space-y-4">
                     <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar animate-fade-up" style={{ animationDelay: '0.4s' }}>
                       {orgs.map((org, i) => (
-                        <div key={org.id} className="relative w-full group/org animate-fade-up" style={{ animationDelay: `${0.4 + (i * 0.06)}s` }}>
+                        <div key={org.id} className="relative group/item animate-fade-up" style={{ animationDelay: `${0.4 + (i * 0.06)}s` }}>
                           <button
                             onClick={() => handleSelectOrg(org.id, org.name)}
-                            className="w-full text-left bg-card-bg border border-card-border hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 pr-12 text-foreground transition-all duration-150 cursor-pointer flex items-center justify-between group"
+                            className="w-full text-left bg-gray-900/95 border border-gray-800 hover:border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 text-foreground transition-all duration-150 cursor-pointer flex items-center justify-between group"
                           >
-                            <span className="font-medium text-gray-300 group-hover:text-foreground transition-colors">{org.name}</span>
+                            <span className="font-medium text-gray-300 group-hover:text-white transition-colors pr-8">{org.name}</span>
                             <ArrowRight className="w-4 h-4 text-primary opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150" />
                           </button>
                           <button 
                             onClick={(e) => handleDeleteOrg(org.id, e)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-text-sec hover:text-red-400 hover:bg-red-500/10 rounded-md opacity-0 group-hover/org:opacity-100 transition-all z-10 cursor-pointer"
-                            title="Delete Workspace"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-all z-10 cursor-pointer rounded-lg hover:bg-red-500/10"
+                            title="Delete workspace"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-6 pt-5 border-t border-card-border/50 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+                    <div className="mt-6 pt-5 border-t border-gray-800/50 animate-fade-up" style={{ animationDelay: '0.5s' }}>
                       <button
                         onClick={() => setIsCreatingNew(true)}
-                        className="w-full flex items-center justify-center gap-2 text-sm text-text-sec hover:text-primary transition-colors cursor-pointer group font-medium"
+                        className="w-full flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors cursor-pointer group font-medium"
                       >
                         Or create a new organization
                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-150" />
@@ -157,16 +157,16 @@ function App() {
                 ) : (
                   <form onSubmit={handleRegister} className="space-y-5">
                     <div className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
-                      <label className="block text-sm font-medium text-text-sec mb-2">Organization Name</label>
+                      <label className="block text-sm font-medium text-gray-400 mb-2">Organization Name</label>
                       <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                          <Building2 className="h-5 w-5 text-text-sec group-focus-within:text-primary transition-colors duration-150" />
+                          <Building2 className="h-5 w-5 text-gray-500 group-focus-within:text-primary transition-colors duration-150" />
                         </div>
                         <input
                           name="orgName"
                           type="text"
                           required
-                          className="w-full bg-background/80 border border-card-border rounded-xl pl-10 pr-4 py-3 text-foreground shadow-inner focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all duration-150 placeholder:text-gray-600"
+                          className="w-full bg-black/80 border border-gray-800 rounded-xl pl-10 pr-4 py-3 text-white shadow-inner focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all duration-150 placeholder:text-gray-600"
                           placeholder="e.g. Acme Corp"
                         />
                       </div>
@@ -181,11 +181,11 @@ function App() {
                     </button>
 
                     {orgs.length > 0 && (
-                      <div className="text-center mt-5 pt-4 border-t border-card-border/50 animate-fade-up" style={{ animationDelay: '0.52s' }}>
+                      <div className="text-center mt-5 pt-4 border-t border-gray-800/50 animate-fade-up" style={{ animationDelay: '0.52s' }}>
                         <button
                           type="button"
                           onClick={() => setIsCreatingNew(false)}
-                          className="text-sm text-text-sec hover:text-foreground cursor-pointer transition-colors font-medium"
+                          className="text-sm text-gray-500 hover:text-white cursor-pointer transition-colors font-medium"
                         >
                           &larr; Back to existing
                         </button>
